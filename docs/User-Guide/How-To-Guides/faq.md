@@ -419,3 +419,11 @@ You are highly encouraged to avoid changes such as the ones above to questions w
 Neither of these options will affect the score a student may already have obtained in any previous variants. However, any work a student may have started on an open variant but not yet submitted will be lost.
 
 For exams and other summative assessments where students may have been negatively impacted by such a change, you are encouraged to consider [giving students credit for issues such as these](regrading.md).
+
+## I edited the exam, but when I try it as a student I don't see the new questions
+
+You need to delete the exam copy on the Students tab so that PL will generate a new student copy of the exam for you.
+
+## Students are getting points but they are stuck at 0%
+
+You forgot to set "credit":100 in the allowAccess rule.

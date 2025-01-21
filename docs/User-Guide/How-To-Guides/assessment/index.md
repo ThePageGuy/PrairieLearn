@@ -38,6 +38,10 @@ Assessments are organized into `sets` (e.g., `Homework`, `Quiz`, `Exam`) and wit
 
 You can select a set from the list of [standardized assessment sets](../course/index.md#standardized-assessment-sets) or create your [own](../course/index.md#adding-your-own-assessment-sets).
 
+### Notice for Web Interface User
+
+- No setting the AID for the assessment, would result in having a lot of assessments called `New_1`, `New_2`, etc. Assessment naming is primarily via the assessment_set/assessment_number pair (called the assessment_label inside the code).
+
 ## Assessment modules
 
 Instructors may want to group their assessments by course modules (topics, sections or chapters in a course). When using `"groupAssessmentsBy" : "Module"` in `infoCourseInstance.json`, instructors can assign an assessment to a specific module by setting the `module` property in `infoAssessment.json`, as illustrated in the example above. If the property `module` is omitted, by default the assessment will have `"module" : "Default"`.

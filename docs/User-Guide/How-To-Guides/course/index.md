@@ -497,3 +497,11 @@ While every course should use the different roles in a way that best suits the c
 | TAs involved in grading              |         None          | Student data editor |
 | Other TAs                            |         None          | Student data viewer |
 | Instructors from other classes       | Course content viewer |        None         |
+
+### Naming Course Best Practices
+
+- Use the office university term name for the long name and an abbreviation of this for the short name.
+  E.g. Illinois uses Spring 2020 for the long name and Sp20 for the short name. 
+
+- If you have multiple sections in the same term then distinguish them with the official university name.
+  E.g. Spring 2020 AL2 and Sp20AL2.

@@ -237,6 +237,16 @@ The part in the box shown to the student after the question has been graded.
 <p>$c = {{trueAnswer.c}}\rm\ m$.</p>
 ```
 
+Best Practices for naming questions:
+
+- Use Topic/Subtopic/Question format
+- Use consistent formatting
+- Use one of the following formatting style:
+  1. snake_case
+  2. kebab-case
+  3. camelCase
+  4. PascalCase
+
 ## Accessing files from code via RequireJS
 
 These library files are separated into _client_ and _server_ libraries. Client libraries are accessible from both `client.js` and `server.js` in each question, while server libraries are only accessible from `server.js`. This means that any secret code that students should not be able to access can be put in a server library, while other non-sensitive code can go in client libraries. There is never a need to put a library file into both the client and server directories, because it can just go only into the client directory and be accessed directly from there by both `client.js` and `server.js`.
