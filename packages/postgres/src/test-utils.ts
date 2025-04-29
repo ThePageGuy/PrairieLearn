@@ -43,42 +43,51 @@ async function createDatabase(
     ...getPoolConfig(options),
     database: options.defaultDatabase ?? POSTGRES_DATABASE,
   });
-  await client.connect();
 
-  const escapedDatabase = client.escapeIdentifier(
-    database ?? getDatabaseNameForCurrentMochaWorker(options.database),
-  );
-  if (dropExistingDatabase ?? true) {
-    await client.query(`DROP DATABASE IF EXISTS ${escapedDatabase}`);
-  }
+  try {
+    await client.connect();
 
-  if (templateDatabase) {
-    const escapedTemplateDatabase = client.escapeIdentifier(templateDatabase);
-    await client.query(`CREATE DATABASE ${escapedDatabase} TEMPLATE ${escapedTemplateDatabase}`);
-  } else {
-    await client.query(`CREATE DATABASE ${escapedDatabase}`);
-  }
-
-  await client.end();
-
-  await prepare?.(client);
-
-  if (configurePool) {
-    await defaultPool.initAsync(
-      {
-        user: options.user ?? POSTGRES_USER,
-        host: options.host ?? POSTGRES_HOST,
-        database: getDatabaseNameForCurrentMochaWorker(options.database),
-        // Offer sensible default, but these can be overridden by `options.poolConfig`.
-        max: 10,
-        idleTimeoutMillis: 30000,
-        errorOnUnusedParameters: true,
-        ...(options.poolConfig ?? {}),
-      },
-      (err) => {
-        throw err;
-      },
+    const escapedDatabase = client.escapeIdentifier(
+      database ?? getDatabaseNameForCurrentMochaWorker(options.database),
     );
+    
+    if (dropExistingDatabase ?? true) {
+      // First, terminate all connections to the database
+      await client.query(`
+        SELECT pg_terminate_backend(pid)
+        FROM pg_stat_activity
+        WHERE datname = ${escapedDatabase}
+      `);
+      await client.query(`DROP DATABASE IF EXISTS ${escapedDatabase}`);
+    }
+
+    if (templateDatabase) {
+      const escapedTemplateDatabase = client.escapeIdentifier(templateDatabase);
+      await client.query(`CREATE DATABASE ${escapedDatabase} TEMPLATE ${escapedTemplateDatabase}`);
+    } else {
+      await client.query(`CREATE DATABASE ${escapedDatabase}`);
+    }
+
+    await prepare?.(client);
+
+    if (configurePool) {
+      await defaultPool.initAsync(
+        {
+          user: options.user ?? POSTGRES_USER,
+          host: options.host ?? POSTGRES_HOST,
+          database: getDatabaseNameForCurrentMochaWorker(options.database),
+          max: 10,
+          idleTimeoutMillis: 30000,
+          errorOnUnusedParameters: true,
+          ...(options.poolConfig ?? {}),
+        },
+        (err) => {
+          throw err;
+        },
+      );
+    }
+  } finally {
+    await client.end();
   }
 }
 
@@ -111,6 +120,7 @@ async function dropDatabase(
   }
 
   const databaseName = database ?? getDatabaseNameForCurrentMochaWorker(options.database);
+  
   if ('PL_KEEP_TEST_DB' in process.env && !force) {
     console.log(`PL_KEEP_TEST_DB environment variable set, not dropping database ${databaseName}`);
     return;
@@ -120,9 +130,21 @@ async function dropDatabase(
     ...getPoolConfig(options),
     database: options.defaultDatabase ?? POSTGRES_DATABASE,
   });
-  await client.connect();
-  await client.query(`DROP DATABASE IF EXISTS ${client.escapeIdentifier(databaseName)}`);
-  await client.end();
+
+  try {
+    await client.connect();
+    
+    // Terminate all connections to the database
+    await client.query(`
+      SELECT pg_terminate_backend(pid)
+      FROM pg_stat_activity
+      WHERE datname = $1
+    `, [databaseName]);
+    
+    await client.query(`DROP DATABASE IF EXISTS ${client.escapeIdentifier(databaseName)}`);
+  } finally {
+    await client.end();
+  }
 }
 
 function getDatabaseNameForCurrentMochaWorker(namespace: string): string {

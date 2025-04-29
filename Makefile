@@ -42,6 +42,27 @@ update-database-description:
 start-support: start-postgres start-redis start-s3rver
 start-postgres:
 	@scripts/start_postgres.sh
+	@echo "PostgreSQL started successfully"
+
+stop-postgres:
+	@if [ -f /tmp/postgres/postmaster.pid ]; then \
+		pg_ctl -D /tmp/postgres stop -m smart; \
+		rm -f /tmp/postgres/postmaster.pid; \
+		echo "PostgreSQL stopped successfully"; \
+	else \
+		echo "PostgreSQL is not running"; \
+	fi
+
+clean-postgres:
+	@if [ -f /tmp/postgres/postmaster.pid ]; then \
+		echo "Cleaning up PostgreSQL..."; \
+		pg_ctl -D /tmp/postgres stop -m immediate; \
+		rm -f /tmp/postgres/postmaster.pid; \
+		echo "PostgreSQL cleaned up"; \
+	else \
+		echo "No PostgreSQL cleanup needed"; \
+	fi
+
 start-redis:
 	@scripts/start_redis.sh
 start-s3rver:

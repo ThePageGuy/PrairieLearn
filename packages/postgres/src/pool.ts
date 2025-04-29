@@ -179,44 +179,35 @@ export class PostgresPool {
   ): Promise<void> {
     this.errorOnUnusedParameters = pgConfig.errorOnUnusedParameters ?? false;
     this.pool = new pg.Pool(pgConfig);
+    
+    // Set up error handling for the pool
     this.pool.on('error', function (err, client) {
       const lastQuery = lastQueryMap.get(client);
       idleErrorHandler(addDataToError(err, { lastQuery }), client);
     });
+
+    // Set up error handling for individual clients
     this.pool.on('connect', (client) => {
       client.on('error', (err) => {
         const lastQuery = lastQueryMap.get(client);
         idleErrorHandler(addDataToError(err, { lastQuery }), client);
       });
     });
+
+    // Clean up client resources when removed
     this.pool.on('remove', (client) => {
-      // This shouldn't be necessary, as `pg` currently allows clients to be
-      // garbage collected after they're removed. However, if `pg` someday
-      // starts reusing client objects across difference connections, this
-      // will ensure that we re-set the search path when the client reconnects.
       searchSchemaMap.delete(client);
+      lastQueryMap.delete(client);
     });
 
     // Attempt to connect to the database so that we can fail quickly if
-    // something isn't configured correctly.
-    let retryCount = 0;
-    const retryTimeouts = [500, 1000, 2000, 5000, 10000];
-    while (retryCount <= retryTimeouts.length) {
-      try {
-        const client = await this.pool.connect();
-        client.release();
-        return;
-      } catch (err: any) {
-        if (retryCount === retryTimeouts.length) {
-          throw new Error(
-            `Could not connect to Postgres after ${retryTimeouts.length} attempts: ${err.message}`,
-          );
-        }
-
-        const timeout = retryTimeouts[retryCount];
-        retryCount++;
-        await new Promise((resolve) => setTimeout(resolve, timeout));
-      }
+    // there are any connection issues
+    try {
+      const client = await this.pool.connect();
+      client.release();
+    } catch (err) {
+      await this.closeAsync();
+      throw err;
     }
   }
 
@@ -230,8 +221,24 @@ export class PostgresPool {
    */
   async closeAsync(): Promise<void> {
     if (!this.pool) return;
-    await this.pool.end();
-    this.pool = null;
+    
+    try {
+      // First, close all idle connections
+      const idleClients = this.pool.idleCount;
+      if (idleClients > 0) {
+        console.log(`Closing ${idleClients} idle connections...`);
+      }
+
+      // Then close the pool
+      await this.pool.end();
+    } catch (err) {
+      console.error('Error while closing pool:', err);
+      throw err;
+    } finally {
+      this.pool = null;
+      this.searchSchema = null;
+      this._queryCount = 0;
+    }
   }
 
   /**
