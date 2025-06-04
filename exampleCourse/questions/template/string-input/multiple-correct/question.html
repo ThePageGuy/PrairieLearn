@@ -1,0 +1,11 @@
+<pl-question-panel>
+  <p>Enter a valid variable name in Python that starts with a letter and contains only letters, digits, or underscores.</p>
+</pl-question-panel>
+
+<pl-string-input
+  answers-name="variable_name"
+  label="Variable Name"
+  remove-spaces="true"
+  regex="^[A-Za-z][A-Za-z0-9_]*$"
+  regex-error="Variable name must start with a letter and contain only letters, digits, or underscores."
+></pl-string-input>
