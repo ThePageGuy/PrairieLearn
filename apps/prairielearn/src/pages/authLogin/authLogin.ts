@@ -77,6 +77,9 @@ router.get(
           case 'Google':
             url = '/pl/oauth2login';
             break;
+          case 'Keycloak':
+            url = '/pl/oauth2login';
+            break;
           case 'Azure':
             url = '/pl/azure_login';
             break;

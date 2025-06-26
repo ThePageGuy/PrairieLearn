@@ -109,6 +109,16 @@ function LoginPageContainer({
             color: ${config.shibLinkColors.active.text};
           }
 
+          .btn-wwu {
+            background-color: #747C53;
+            color: #fff;
+          }
+
+          .btn-wwu:hover {
+            color: #747C53;
+            border: solid #747C53;
+          }
+
           .institution-header {
             overflow: hidden;
             text-align: center;
@@ -188,6 +198,15 @@ function GoogleLoginButton() {
   `;
 }
 
+function KeycloakLoginButton() {
+  return html`
+    <a class="btn btn-wwu d-block position-relative" href="/pl/oauth2login">
+      <img src="${assetPath('/images/wwu_logo.svg')}" class="social-icon" />
+      <span class="fw-bold">Login with WWU</span>
+    </a>
+  `;
+}
+
 function MicrosoftLoginButton() {
   return html`
     <a class="btn btn-dark d-block position-relative" href="/pl/azure_login">
@@ -229,6 +248,7 @@ export function AuthLogin({
       <div class="login-methods mt-4">
         ${config.hasShib && !config.hideShibLogin ? ShibLoginButton() : ''}
         ${config.hasOauth ? GoogleLoginButton() : ''}
+        ${config.hasOauth ? KeycloakLoginButton() : ''}
         ${config.hasAzure && isEnterprise() ? MicrosoftLoginButton() : ''}
       </div>
       ${institutionAuthnProviders?.length
@@ -282,6 +302,7 @@ export function AuthLoginUnsupportedProvider({
     supportsShib &&
     defaultProvider?.name !== 'Shibboleth';
   const showGoogle = config.hasOauth && supportsGoogle && defaultProvider?.name !== 'Google';
+  const showKeycloack = config.hasOauth && supportsGoogle && defaultProvider?.name !== 'Keycloack';
   const showAzure = config.hasAzure && supportsAzure && defaultProvider?.name !== 'Azure';
 
   let defaultProviderButton: HtmlValue = null;
@@ -294,6 +315,9 @@ export function AuthLoginUnsupportedProvider({
       break;
     case 'Google':
       defaultProviderButton = GoogleLoginButton();
+      break;
+    case 'Keycloack':
+      defaultProviderButton = KeycloakLoginButton();
       break;
     case 'Azure':
       defaultProviderButton = MicrosoftLoginButton();
@@ -351,6 +375,7 @@ export function AuthLoginUnsupportedProvider({
           showSaml ? SamlLoginButton({ institutionId }) : '',
           showShib ? ShibLoginButton() : '',
           showGoogle ? GoogleLoginButton() : '',
+          showKeycloack ? KeycloakLoginButton() : '',
           showAzure ? MicrosoftLoginButton() : '',
         ]}
       </div>
