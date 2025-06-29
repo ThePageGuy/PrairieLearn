@@ -200,7 +200,7 @@ function GoogleLoginButton() {
 
 function KeycloakLoginButton() {
   return html`
-    <a class="btn btn-wwu d-block position-relative" href="/pl/oauth2login">
+    <a class="btn btn-wwu d-block position-relative" href="/pl/oauth2login?provider=keycloak">
       <img src="${assetPath('/images/wwu_logo.svg')}" class="social-icon" />
       <span class="fw-bold">Login with WWU</span>
     </a>
@@ -302,7 +302,7 @@ export function AuthLoginUnsupportedProvider({
     supportsShib &&
     defaultProvider?.name !== 'Shibboleth';
   const showGoogle = config.hasOauth && supportsGoogle && defaultProvider?.name !== 'Google';
-  const showKeycloack = config.hasOauth && supportsGoogle && defaultProvider?.name !== 'Keycloack';
+  const showKeycloak = config.hasOauth && supportsGoogle && defaultProvider?.name !== 'Keycloak';
   const showAzure = config.hasAzure && supportsAzure && defaultProvider?.name !== 'Azure';
 
   let defaultProviderButton: HtmlValue = null;
@@ -316,7 +316,7 @@ export function AuthLoginUnsupportedProvider({
     case 'Google':
       defaultProviderButton = GoogleLoginButton();
       break;
-    case 'Keycloack':
+    case 'Keycloak':
       defaultProviderButton = KeycloakLoginButton();
       break;
     case 'Azure':
@@ -375,7 +375,7 @@ export function AuthLoginUnsupportedProvider({
           showSaml ? SamlLoginButton({ institutionId }) : '',
           showShib ? ShibLoginButton() : '',
           showGoogle ? GoogleLoginButton() : '',
-          showKeycloack ? KeycloakLoginButton() : '',
+          showKeycloak ? KeycloakLoginButton() : '',
           showAzure ? MicrosoftLoginButton() : '',
         ]}
       </div>
