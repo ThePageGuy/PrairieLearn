@@ -137,7 +137,7 @@ const sideNavPagesTabs = {
     },
     {
       activePages: ['instance_admin'],
-      activeSubPages: ['lti13'],
+      activeSubPages: ['integrations'],
       urlSuffix: '/instance_admin/lti13_instance',
       iconClasses: 'fas fa-school-flag fa-fw',
       tabLabel: 'Integrations',
@@ -213,7 +213,7 @@ function CourseNav({
       <div id="course-dropdown" class="dropdown">
         <button
           type="button"
-          class="btn dropdown-toggle dropdown-menu-right border border-gray bg-white w-100 d-flex justify-content-between align-items-center mb-2"
+          class="btn dropdown-toggle border border-gray bg-white w-100 d-flex justify-content-between align-items-center mb-2"
           aria-label="Change course"
           aria-haspopup="true"
           aria-expanded="false"
@@ -271,7 +271,7 @@ function CourseInstanceNav({
         <div id="course-instance-dropdown" class="dropdown">
           <button
             type="button"
-            class="btn dropdown-toggle dropdown-menu-right border border-gray bg-white w-100 d-flex justify-content-between align-items-center mb-2"
+            class="btn dropdown-toggle border border-gray bg-white w-100 d-flex justify-content-between align-items-center mb-2"
             aria-label="Change course instance"
             aria-haspopup="true"
             aria-expanded="false"
