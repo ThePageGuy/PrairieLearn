@@ -56,7 +56,7 @@ router.get(
         throw err;
       });
 
-      idToken = tokens.id_token;
+      idToken = tokens.id_token as string;
       if (!idToken) throw new Error('Missing id_token in Google auth response');
 
     } else if (provider === 'keycloak') {
