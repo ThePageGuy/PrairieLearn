@@ -1,0 +1,1 @@
+This checkbox question randomly selects one of three categories (vowels, primary colors, or continents), displays the combined list of all options in a fixed order, and marks only the items in the chosen category as correct with partial credit enabled.

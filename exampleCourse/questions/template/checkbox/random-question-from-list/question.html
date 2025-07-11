@@ -1,0 +1,16 @@
+<pl-question-panel>
+  <h3>Checkboxes: Random question from list</h3>
+  <p>Select all of the following that belong to the category <strong>{{params.topic}}</strong>.</p>
+</pl-question-panel>
+
+<pl-checkbox
+  answers-name="items"
+  number-answers="15"
+  fixed-order="true"
+  partial-credit="true"
+  min-correct="2"
+>
+  {{#params.options}}
+    <pl-answer correct="{{correct}}">{{answer}}</pl-answer>
+  {{/params.options}}
+</pl-checkbox>
