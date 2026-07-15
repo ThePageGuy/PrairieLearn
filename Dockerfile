@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile-upstream:master-labs
 FROM amazonlinux:2023
-ARG CACHEBUST=2025-07-15-14-16-18
+ARG CACHEBUST=2026-07-15-15-37-39
 
 WORKDIR /PrairieLearn
 
